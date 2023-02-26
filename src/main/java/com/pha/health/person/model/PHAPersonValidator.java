@@ -1,5 +1,6 @@
 package com.pha.health.person.model;
 
+import com.pha.health.validation.ValidationStatusAndMessage;
 import org.json.JSONObject;
 
 import java.util.regex.Matcher;
@@ -11,6 +12,48 @@ import java.util.regex.Pattern;
 public class PHAPersonValidator {
 
     /**
+     * Checks and validates a JSON String .
+     * <p>
+     * The validation checks that the JSON String contains key important data and key expected.
+     *
+     * @param jsonString JSON String representation of a PHA Person
+     * @return True, if the JSON String is valid and contains the key important data.
+     */
+    public static ValidationStatusAndMessage validateUserJSONString(String jsonString) {
+
+        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
+
+        if (jsonString == null) {
+
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Input JSON String was null");
+
+        } else if (jsonString.isEmpty()) {
+
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Input JSON String was empty");
+
+        } else if (jsonString.length() < 1) {
+
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Input JSON String was too short");
+
+        } else if (jsonString == "") {
+
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Input JSON String was empty");
+
+        } else {
+
+            validationStatusAndMessage.setValid(true);
+            validationStatusAndMessage.setValidationNotification("Input JSON String passed validation checks");
+
+        }
+
+        return validationStatusAndMessage;
+    }
+
+    /**
      * Checks and validates a Person's Email Address.
      * <p>
      * The validation checks that the Email Address matches this regular expression:  "^(.+)@(.+)$"
@@ -18,17 +61,48 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the user email matches the regular expression. False, if not.
      */
-       public static Boolean validateUserJSONObject(JSONObject jsonObject) {
+    public static ValidationStatusAndMessage validateUserJSONObject(JSONObject jsonObject) {
 
-        boolean isUserFirstNameValid = validateUserFirstName(jsonObject);
-        boolean isUserLastNameValid = validateUserLastName(jsonObject);
 
-        boolean isUserEmailAddressValid = validateUserEmailAddress(jsonObject);
-        boolean isUserPhoneNumberValid = validateUserPhoneNumber(jsonObject);
+        ValidationStatusAndMessage isUserFirstNameValid = validateUserFirstName(jsonObject);
+        ValidationStatusAndMessage isUserLastNameValid = validateUserLastName(jsonObject);
 
-        boolean isUserDODIdentifierValid = validatePersonDODIdentifier(jsonObject);
+        ValidationStatusAndMessage isUserEmailAddressValid = validateUserEmailAddress(jsonObject);
+        ValidationStatusAndMessage isUserPhoneNumberValid = validateUserPhoneNumber(jsonObject);
 
-        return (isUserFirstNameValid && isUserLastNameValid && isUserEmailAddressValid && isUserPhoneNumberValid && isUserDODIdentifierValid);
+        ValidationStatusAndMessage isUserDODIdentifierValid = validatePersonDODIdentifier(jsonObject);
+
+        //need to aggregate here
+
+        ValidationStatusAndMessage aggregatedValidationMessages = new ValidationStatusAndMessage();
+
+        aggregatedValidationMessages.setValid(
+                isUserFirstNameValid.getValidationStatus() &&
+                        isUserLastNameValid.getValidationStatus() &&
+                        isUserEmailAddressValid.getValidationStatus() &&
+                        isUserPhoneNumberValid.getValidationStatus() &&
+                        isUserDODIdentifierValid.getValidationStatus());
+
+        StringBuffer stringBuffer = new StringBuffer();
+
+        if (!isUserFirstNameValid.getValidationStatus())
+            stringBuffer.append(isUserFirstNameValid.getValidationNotification());
+
+        if (!isUserLastNameValid.getValidationStatus())
+            stringBuffer.append(isUserLastNameValid.getValidationNotification());
+
+        if (!isUserEmailAddressValid.getValidationStatus())
+            stringBuffer.append(isUserEmailAddressValid.getValidationNotification());
+
+        if (!isUserPhoneNumberValid.getValidationStatus())
+            stringBuffer.append(isUserPhoneNumberValid.getValidationNotification());
+
+        if (!isUserDODIdentifierValid.getValidationStatus())
+            stringBuffer.append(isUserDODIdentifierValid.getValidationNotification());
+
+        aggregatedValidationMessages.setValidationNotification(stringBuffer.toString());
+
+        return aggregatedValidationMessages;
     }
 
     /**
@@ -39,31 +113,40 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the first name is non-null and non-empty. False, if not.
      */
-    private static boolean validateUserFirstName(JSONObject jsonObject) {
+    private static ValidationStatusAndMessage validateUserFirstName(JSONObject jsonObject) {
+
+        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
 
         String personFirstName = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.FIRST_NAME);
 
-        boolean isValidFirstName = true;
-
         if (personFirstName == null) {
 
-            isValidFirstName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person First Name was null");
 
         } else if (personFirstName.isEmpty()) {
 
-            isValidFirstName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person First Name was empty");
 
         } else if (personFirstName.length() < 1) {
 
-            isValidFirstName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person First Name was too short");
 
         } else if (personFirstName == "") {
 
-            isValidFirstName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person First Name was empty");
+
+        } else {
+
+            validationStatusAndMessage.setValid(true);
+            validationStatusAndMessage.setValidationNotification("Person First Name passed validation checks");
 
         }
 
-        return isValidFirstName;
+        return validationStatusAndMessage;
     }
 
     /**
@@ -74,31 +157,40 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the last name is non-null and non-empty. False, if not.
      */
-    private static boolean validateUserLastName(JSONObject jsonObject) {
+    private static ValidationStatusAndMessage validateUserLastName(JSONObject jsonObject) {
+
+        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
 
         String personLastName = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.LAST_NAME);
 
-        boolean isValidLastName = true;
-
         if (personLastName == null) {
 
-            isValidLastName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person Last Name was null. ");
 
         } else if (personLastName.isEmpty()) {
 
-            isValidLastName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person Last Name was empty.");
 
         } else if (personLastName.length() < 1) {
 
-            isValidLastName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person Last Name was too short.");
 
         } else if (personLastName == "") {
 
-            isValidLastName = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person Last Name was empty.");
+
+        } else {
+
+            validationStatusAndMessage.setValid(true);
+            validationStatusAndMessage.setValidationNotification("Person Last Name passed validation checks.");
 
         }
 
-        return isValidLastName;
+        return validationStatusAndMessage;
     }
 
     /**
@@ -109,19 +201,32 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the user phone number matches the regular expression. False, if not.
      */
-    public static Boolean validateUserPhoneNumber(JSONObject jsonObject) {
+    public static ValidationStatusAndMessage validateUserPhoneNumber(JSONObject jsonObject) {
+
+        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
 
         String personPhoneNumber = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.PRIMARY_PHONE_NUMBER);
 
         String validPhoneNumberRegularExpression = "^[\\d]{10}$";
 
         Pattern pattern = Pattern.compile(validPhoneNumberRegularExpression);
-
         Matcher matcher = pattern.matcher(personPhoneNumber);
 
-        boolean isValidPhoneNumber = matcher.matches();
+        boolean doesPhoneNumberFitCommonFormat = matcher.matches();
 
-        return isValidPhoneNumber;
+        if (doesPhoneNumberFitCommonFormat) {
+
+            validationStatusAndMessage.setValid(true);
+            validationStatusAndMessage.setValidationNotification("Person Phone Number Format Was Valid. ");
+
+        } else {
+
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person Phone Number Formatted Incorrectly. ");
+
+        }
+
+        return validationStatusAndMessage;
     }
 
     /**
@@ -132,34 +237,45 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the DOD Identifier is non-null and non-empty. False, if not.
      */
-    private static boolean validatePersonDODIdentifier(JSONObject jsonObject) {
+    private static ValidationStatusAndMessage validatePersonDODIdentifier(JSONObject jsonObject) {
+
+        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
 
         String personDODIdentifier = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.DOD_ID);
 
-        boolean isValidDODIdentifier = true;
-
         if (personDODIdentifier == null) {
 
-            isValidDODIdentifier = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("DOD Identifier Was null. ");
 
         } else if (personDODIdentifier.isEmpty()) {
 
-            isValidDODIdentifier = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("DOD Identifier Was empty. ");
 
         } else if (personDODIdentifier.length() < 1) {
 
-            isValidDODIdentifier = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("DOD Identifier Was too short. ");
 
         } else if (personDODIdentifier == "") {
 
-            isValidDODIdentifier = false;
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("DOD Identifier Was empty. ");
+
+        } else {
+
+            validationStatusAndMessage.setValid(true);
+            validationStatusAndMessage.setValidationNotification("DOD Identifier passed validation checks. ");
 
         }
 
-        return isValidDODIdentifier;
+        return validationStatusAndMessage;
     }
 
-    private static boolean validateUserEmailAddress(JSONObject jsonObject) {
+    private static ValidationStatusAndMessage validateUserEmailAddress(JSONObject jsonObject) {
+
+        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
 
         String personEmailAddress = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.EMAIL_ADDRESS);
 
@@ -171,7 +287,19 @@ public class PHAPersonValidator {
 
         boolean isUserEmailValid = matcher.matches();
 
-        return isUserEmailValid;
+        if (isUserEmailValid) {
+
+            validationStatusAndMessage.setValid(true);
+            validationStatusAndMessage.setValidationNotification("Person Email Address Format Was Valid. ");
+
+        } else {
+
+            validationStatusAndMessage.setValid(false);
+            validationStatusAndMessage.setValidationNotification("Person Email Address Formatted Incorrectly. ");
+
+        }
+
+        return validationStatusAndMessage;
     }
 
 }

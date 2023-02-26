@@ -1,8 +1,8 @@
 package com.pha.health.person.api;
 
 import com.pha.health.person.model.PHAPersonValidator;
+import com.pha.health.validation.ValidationStatusAndMessage;
 import org.json.JSONObject;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,17 +31,18 @@ public class PHAPersonRestController {
     @PostMapping("/validate")
     public ResponseEntity<String> validatePHAUserJSON(@RequestBody String phaUserJSONString) {
 
+
         JSONObject phaUserJSONObject = new JSONObject(phaUserJSONString);
 
-        boolean isJSOObjectValid = PHAPersonValidator.validateUserJSONObject(phaUserJSONObject);
+        ValidationStatusAndMessage jsonObjectValidationStatusAndMessage = PHAPersonValidator.validateUserJSONObject(phaUserJSONObject);
 
-        if (!isJSOObjectValid) {
+        if (!jsonObjectValidationStatusAndMessage.getValidationStatus()) {
 
             Map map = new HashMap<String, String>();
 
-            map.put("status", "PHA Person Data is invalid");
+            map.put("status", jsonObjectValidationStatusAndMessage.getValidationNotification());
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(map.toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map.toString());
 
         }
 
