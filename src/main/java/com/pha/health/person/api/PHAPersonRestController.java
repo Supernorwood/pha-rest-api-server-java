@@ -1,0 +1,51 @@
+package com.pha.health.person.api;
+
+import com.pha.health.person.model.PHAPersonValidator;
+import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Restful PHA Person Validation API Controller for the PHA Person API
+ */
+@CrossOrigin
+@RestController
+@RequestMapping("/pha/person")
+public class PHAPersonRestController {
+
+    /**
+     * Default Constructor for the PHA Person Validator RESTController
+     */
+    public PHAPersonRestController() {
+        System.out.println("init -- PHA Person API");
+    }
+
+    /**
+     * Validates the JSON String representation of a PHA Person.
+     */
+    @PostMapping("/validate")
+    public ResponseEntity<String> validatePHAUserJSON(@RequestBody String phaUserJSONString) {
+
+        JSONObject phaUserJSONObject = new JSONObject(phaUserJSONString);
+
+        boolean isJSOObjectValid = PHAPersonValidator.validateUserJSONObject(phaUserJSONObject);
+
+        if (!isJSOObjectValid) {
+
+            Map map = new HashMap<String, String>();
+
+            map.put("status", "PHA Person Data is invalid");
+
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(map.toString());
+
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("PHA Person Valid");
+    }
+
+}
