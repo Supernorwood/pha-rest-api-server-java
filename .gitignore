@@ -1,6 +1,10 @@
 # Compiled class file
 *.class
 
+
+## don't push target/ content
+target/
+
 # Log file
 *.log
 
