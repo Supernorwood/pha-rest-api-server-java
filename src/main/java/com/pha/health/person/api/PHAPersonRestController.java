@@ -1,5 +1,6 @@
 package com.pha.health.person.api;
 
+import com.pha.health.person.model.PHAPersonHelper;
 import com.pha.health.person.model.PHAPersonValidator;
 import com.pha.health.validation.ValidationStatusAndMessage;
 import org.json.JSONObject;
@@ -46,7 +47,10 @@ public class PHAPersonRestController {
 
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("PHA Person Valid");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PHAPersonHelper.toJSON(
+                        PHAPersonHelper.loadFrom(phaUserJSONObject)
+                ).toString(3));
     }
 
 }
