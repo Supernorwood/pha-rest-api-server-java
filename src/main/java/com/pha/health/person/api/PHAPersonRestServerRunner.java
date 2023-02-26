@@ -9,6 +9,7 @@ public class PHAPersonRestServerRunner {
     public static void main(String[] commandLineArguments) {
 
         SpringApplication.run(PHAPersonRestServerRunner.class, commandLineArguments);
+
     }
 
 }

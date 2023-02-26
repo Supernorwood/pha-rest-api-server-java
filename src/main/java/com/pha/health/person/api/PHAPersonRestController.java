@@ -1,5 +1,6 @@
 package com.pha.health.person.api;
 
+import com.pha.health.person.model.PHAPersonHelper;
 import com.pha.health.person.model.PHAPersonValidator;
 import com.pha.health.validation.ValidationStatusAndMessage;
 import org.json.JSONObject;
@@ -31,7 +32,6 @@ public class PHAPersonRestController {
     @PostMapping("/validate")
     public ResponseEntity<String> validatePHAUserJSON(@RequestBody String phaUserJSONString) {
 
-
         JSONObject phaUserJSONObject = new JSONObject(phaUserJSONString);
 
         ValidationStatusAndMessage jsonObjectValidationStatusAndMessage = PHAPersonValidator.validateUserJSONObject(phaUserJSONObject);
@@ -46,7 +46,11 @@ public class PHAPersonRestController {
 
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("PHA Person Valid");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PHAPersonHelper.toJSON(
+                        PHAPersonHelper.loadFrom(phaUserJSONObject)
+                ).toString(3));
+
     }
 
 }
