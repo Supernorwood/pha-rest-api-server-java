@@ -1,6 +1,5 @@
 package com.pha.health.person.api;
 
-import com.pha.health.person.model.PHAPersonHelper;
 import com.pha.health.person.model.PHAPersonValidator;
 import com.pha.health.validation.ValidationStatusAndMessage;
 import org.json.JSONObject;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Restful PHA Person Validation API Controller for the PHA Person API
@@ -27,30 +25,40 @@ public class PHAPersonRestController {
     }
 
     /**
-     * Validates the JSON String representation of a PHA Person.
+     * Return a health check message.
      */
-    @PostMapping("/validate")
+    @GetMapping("/health-check")
+    public String returnHealthCheckContentJSON() {
+        return "PHA Form A Data Intake API Is Up!";
+    }
+
+    /**
+     * Validate and transform the JSON String representation of a PHA Person.
+     */
+    @PostMapping("/transform-user-data")
     public ResponseEntity<String> validatePHAUserJSON(@RequestBody String phaUserJSONString) {
 
-
+        // Create a populated JSONObject from the JSON String
         JSONObject phaUserJSONObject = new JSONObject(phaUserJSONString);
 
-        ValidationStatusAndMessage jsonObjectValidationStatusAndMessage = PHAPersonValidator.validateUserJSONObject(phaUserJSONObject);
+        // Attempt to validate the JSON Object. Validation errors are tracked in the object
+        ValidationStatusAndMessage jsonObjectValidationStatusAndMessage = PHAPersonValidator.validateEntireUserJSONObject(phaUserJSONObject);
 
-        if (!jsonObjectValidationStatusAndMessage.getValidationStatus()) {
+        // If The Validation Does Not Pass...
+        if (!jsonObjectValidationStatusAndMessage.getWasDataValidationSuccess()) {
 
-            Map map = new HashMap<String, String>();
+            // Create a map to hold data validation status codes and messages
+            HashMap dataValidationHashMap = new HashMap<String, String>();
 
-            map.put("status", jsonObjectValidationStatusAndMessage.getValidationNotification());
+            // Put a custom message into the Hash Map
+            dataValidationHashMap.put("validation-status", jsonObjectValidationStatusAndMessage.getDataValidationMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map.toString());
-
+            //Response with an error HTTP code and the validation status messages.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dataValidationHashMap.toString());
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                PHAPersonHelper.toJSON(
-                        PHAPersonHelper.loadFrom(phaUserJSONObject)
-                ).toString(3));
+        // On successful data validation, return HTTP Status OK (200)
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
 }

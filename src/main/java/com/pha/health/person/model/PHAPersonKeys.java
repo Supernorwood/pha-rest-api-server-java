@@ -1,7 +1,10 @@
 package com.pha.health.person.model;
 
 /**
- * JSON Keys for the Primary and Secondary PHA Person JSON Objects.
+ * Frequently used String Constants for working with JSON Objects and JSON Strings.
+ *
+ * The values in this file are ud to avoid data duplication across the application.
+ *
  */
 public class PHAPersonKeys {
     public static final String FIRST_NAME = "fname";

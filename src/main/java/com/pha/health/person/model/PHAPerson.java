@@ -1,8 +1,7 @@
 package com.pha.health.person.model;
 
-
 /**
- * Object Representation of a PHA Person.
+ * Data Definition of a PHA Form A Person.
  */
 public class PHAPerson {
 

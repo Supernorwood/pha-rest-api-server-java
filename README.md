@@ -1,33 +1,107 @@
-# pha-rest-api-server-java# PHA Form A Challenge
+# PHA Form A Data Intake API [Project Summary]
 
-## Part 1
+## About This Project
 
-### to do
-	- [wip] Add some basic validation. 
-Come up w/ meaningful validation messages for a few required fields:
-- input message itself, required First and Last Names, required DOB, DODID, Email
+The PHA Form A Data Intake API is a Spring Web based RESTful API.
 
-### to done
+The RESTful API performs data loading, data validation, and data transformation operations on key user demographic data from PHA Form A.
 
-	- [done] Create an endpoint (POST) to receive sample PHA Form A
-	- [done] Unmarshall and parse the JSON doc
+The aim of this project is to create a RESTful API server to accept and transform PHA Form A data.
 
-	 -[done] Extract demographic data (Name, Address, Phone, Email, DOB, DODID, Gender, Service, Rank)
-	- [done]Design a new JSON doc called PhaPersonInfo.  Have seperate subsections for personal data, address data,
-	  contact data, service data.
+## About The Form A Data Intake API
 
-	- [done] Return new JSON doc as response (HTTP 200).
-    - [done]comment the source cod 
-- put stuff into git
-- - [done] Use standard libs (Spring Boot, Jackson)
+The 'PHA Form A' Data Intake API exposes a RESTful POST endpoint similar to the following:
 
-## Part 2
+`/pha/person/transform-user-data`
 
-	- Modify Part 1. Instead of returning new JSON doc in a response, just return HTTP 200 if message validates and is
-	  successfully parsed and transformed.
+This endpoint parses and extracts key user information submitted to the API over POST requests.
 
-	- Download and install Active MQ.
-	- Add a message producer to send new JSON doc to a queue in AMQ.  Call the queue PHA_FORM_A.
+## Project Objectives:
 
-	- Write a message consumer (seperate project and WAR) to retrieve the message from the queue, and
-	  write it out to a local file.
+### Data Intake API: Phase 1 Objectives
+
+Phase 1 of the PHA Form A Data Intake API shall expose the following capabilities:
+
+- Expose a POST endpoint to receive 'PHA Form A' sample data.
+- Perform basic field validation of form data from POST request data.
+
+- Extract key user extract demographic data from POST request data.
+- Transform key user demographic data into a new JSON Document Schema called PhaPersonInfo.
+
+### Data Intake API: Phase 2 Objectives
+
+Phase 2 of the PHA Form A Data Intake API shall build upon the Phase 1 Objectives and expose the following capabilities.
+
+- [pending testing] Modify POST request to return only an HTTP 200 status code on successful message validation, parsing and transformation.
+- [next action] Integrate the Data Intake environment with an ActiveMQ messaging system.
+
+- Configure and instantiate a JMS Producer Subsystem to publish JSON Documents to target queue (PHA_FORM_A).
+- Configure and instantiate a JMS Consumer Subsystem to retrieve and persist JSON Documents from target queue (PHA_FORM_A).
+
+- Publish the JMS Producer and JMS Consumer Subsystems to WAR files to be loaded into Enterprise Java Application server.
+
+## Project Constraints
+
+- The application shall use only standard server development libraries.
+    - 	e.g. Spring Boot, Jackson.
+
+## Key User Demographic Data To Validate
+
+Key fields from the POST Request data will be validated for existence and adherence to basic regular expression based validation rules.
+
+Each of the following fields are checked for existence and provide aggregated validation error messages.
+
+    - Input JSON Payload 
+    - User Email Address
+  
+    - User First Name
+    - User Last Name
+  
+    - User Data of Birth
+    - User DODID
+
+## Key User Demographic Data To Extract
+
+The API will extract and load the following user demographic data.
+
+- User Name
+- User Mailing Address
+
+- User PHone Number
+- User Email Address
+
+- User Date of Birth
+- User DOD Id
+
+- User Gender
+- User Service
+
+- User Rank
+
+## Quick Start: PHA Form A Data Intake API
+
+Getting started with and setting up the PHA Form A Data Intake API can be accomplished in only a few commands.
+
+### 1. Download the API Project Files
+
+`git clone https://github.com/Supernorwood/pha-rest-api-server-java.git`
+
+### 2. Navigate To the API Project Files Directory
+
+`cd pha-rest-api-server-java`
+
+### 3. Run Maven Installer on the API Project Files
+
+`mvn install`
+
+### 4. Navigate To the API Project Build Artifacts  Directory
+
+`cd target/`
+
+### 5. Run The PHA Form A API Server
+
+`java -jar pha-rest-api-server-java.jar`
+
+### 6. Point Your Browser To The Health Check Endpoint
+
+`http://localhost:8080/pha/health-check`

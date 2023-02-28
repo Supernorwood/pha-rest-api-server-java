@@ -1,37 +1,48 @@
 package com.pha.health.validation;
 
+/**
+ * The Result of the validation attempt of a PHA Form A Person JSON Document
+ * <p>
+ * This Object contains a boolean validation status and a Data validation notification string.
+ */
 public class ValidationStatusAndMessage {
 
-    Boolean validationStatus;
-    String validationNotification;
+    /**
+     * Did the content pass the data validation checks?
+     */
+    Boolean wasDataValidationSuccess;
+
+    /**
+     * Data Validation Notifications
+     */
+    String dataValidationMessage;
 
     public ValidationStatusAndMessage() {
 
     }
 
-    public ValidationStatusAndMessage(Boolean validationStatus, String validationNotification) {
+    public ValidationStatusAndMessage(Boolean wasDataValidationSuccess, String dataValidationMessage) {
 
-        this.validationStatus = validationStatus;
-        this.validationNotification = validationNotification;
+        this.wasDataValidationSuccess = wasDataValidationSuccess;
+        this.dataValidationMessage = dataValidationMessage;
 
     }
 
-    public Boolean getValidationStatus() {
-        return validationStatus;
+    public Boolean getWasDataValidationSuccess() {
+        return this.wasDataValidationSuccess;
     }
 
-    public void setValid(Boolean valid) {
-        validationStatus = valid;
+    public void setDataValidationSuccessStatus(Boolean valid) {
+        this.wasDataValidationSuccess = valid;
     }
 
-    public String getValidationNotification() {
-        return validationNotification;
+    public String getDataValidationMessage() {
+        return this.dataValidationMessage;
     }
 
-    public void setValidationNotification(String validationNotification) {
-        this.validationNotification = validationNotification;
+    public void setDataValidationMessage(String dataValidationMessage) {
+        this.dataValidationMessage = dataValidationMessage;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -40,22 +51,22 @@ public class ValidationStatusAndMessage {
 
         ValidationStatusAndMessage that = (ValidationStatusAndMessage) o;
 
-        if (!validationStatus.equals(that.validationStatus)) return false;
-        return validationNotification.equals(that.validationNotification);
+        if (!wasDataValidationSuccess.equals(that.wasDataValidationSuccess)) return false;
+        return dataValidationMessage.equals(that.dataValidationMessage);
     }
 
     @Override
     public int hashCode() {
-        int result = validationStatus.hashCode();
-        result = 31 * result + validationNotification.hashCode();
+        int result = wasDataValidationSuccess.hashCode();
+        result = 31 * result + dataValidationMessage.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
         return "ValidationStatusAndMessage{" +
-                "isValid=" + validationStatus +
-                ", validationNotification='" + validationNotification + '\'' +
+                "isValid=" + wasDataValidationSuccess +
+                ", validationNotification='" + dataValidationMessage + '\'' +
                 '}';
     }
 }

@@ -7,49 +7,54 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Validates the JSON Object Representation of a PHA Person
+ * Validates the JSON Object Representation of a PHA Form A Person.
+ * <p>
+ * In short, {@code PHAPersonValidator} does the heavy lifting for content validation of PHA Form A JSON data.
  */
 public class PHAPersonValidator {
 
     /**
-     * Checks and validates a JSON String .
+     * Checks and validates that an input JSON String contains the expected values.
      * <p>
      * The validation checks that the JSON String contains key important data and key expected.
      *
-     * @param jsonString JSON String representation of a PHA Person
-     * @return True, if the JSON String is valid and contains the key important data.
+     * @param jsonString JSON String fetched from the API POST request call.
+     * @return Aggregated ValidationStatusAndMessage of the results of input String validation.
      */
     public static ValidationStatusAndMessage validateUserJSONString(String jsonString) {
 
+        // Creates a new validation results object
         ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
 
-        if (jsonString == null) {
+        if (jsonString == null) { // check that the input json string is not null
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Input JSON String was null");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Input JSON String was null");
 
-        } else if (jsonString.isEmpty()) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Input JSON String was empty");
+        } else if (jsonString.isEmpty()) { // check that the input json string is not empty
 
-        } else if (jsonString.length() < 1) {
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Input JSON String was empty");
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Input JSON String was too short");
+        } else if (jsonString.length() < 1) { // check that the input json string is not too short
 
-        } else if (jsonString == "") {
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Input JSON String was too short");
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Input JSON String was empty");
+        } else if (jsonString == "") {  // check that the input json string is not a nuyll string
 
-        } else {
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Input JSON String was empty");
 
-            validationStatusAndMessage.setValid(true);
-            validationStatusAndMessage.setValidationNotification("Input JSON String passed validation checks");
+        } else { // handle default validation scenario
+
+            validationStatusAndMessage.setDataValidationSuccessStatus(true);
+            validationStatusAndMessage.setDataValidationMessage("Input JSON String passed validation checks");
 
         }
 
+        // return the status of the data validation
         return validationStatusAndMessage;
     }
 
@@ -61,47 +66,61 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the user email matches the regular expression. False, if not.
      */
-    public static ValidationStatusAndMessage validateUserJSONObject(JSONObject jsonObject) {
+    public static ValidationStatusAndMessage validateEntireUserJSONObject(JSONObject jsonObject) {
 
-
+        // Create ValidationStatusAndMessage for the user first name validation
         ValidationStatusAndMessage isUserFirstNameValid = validateUserFirstName(jsonObject);
+
+        // Create ValidationStatusAndMessage for the user last name validation
         ValidationStatusAndMessage isUserLastNameValid = validateUserLastName(jsonObject);
 
+        // Create ValidationStatusAndMessage for the user email validation
         ValidationStatusAndMessage isUserEmailAddressValid = validateUserEmailAddress(jsonObject);
+
+        // Create ValidationStatusAndMessage for the user phone number validation
         ValidationStatusAndMessage isUserPhoneNumberValid = validateUserPhoneNumber(jsonObject);
 
+        // Create ValidationStatusAndMessage for the user DOD Id validation
         ValidationStatusAndMessage isUserDODIdentifierValid = validatePersonDODIdentifier(jsonObject);
 
-        //need to aggregate here
-
+        // Create ValidationStatusAndMessage to hold the aggregation of all data validations
         ValidationStatusAndMessage aggregatedValidationMessages = new ValidationStatusAndMessage();
 
-        aggregatedValidationMessages.setValid(
-                isUserFirstNameValid.getValidationStatus() &&
-                        isUserLastNameValid.getValidationStatus() &&
-                        isUserEmailAddressValid.getValidationStatus() &&
-                        isUserPhoneNumberValid.getValidationStatus() &&
-                        isUserDODIdentifierValid.getValidationStatus());
+        // calculate boolean logic of total user validation from each of the smaller validations and set the boolean status value
+        aggregatedValidationMessages.setDataValidationSuccessStatus(
+                isUserFirstNameValid.getWasDataValidationSuccess() &&
+                        isUserLastNameValid.getWasDataValidationSuccess() &&
+                        isUserEmailAddressValid.getWasDataValidationSuccess() &&
+                        isUserPhoneNumberValid.getWasDataValidationSuccess() &&
+                        isUserDODIdentifierValid.getWasDataValidationSuccess());
 
+        // Create string buffer to aggregate each of the data validation message Strings
         StringBuffer stringBuffer = new StringBuffer();
 
-        if (!isUserFirstNameValid.getValidationStatus())
-            stringBuffer.append(isUserFirstNameValid.getValidationNotification());
+        // if user first name validation error, add the validation message to the string buffer
+        if (!isUserFirstNameValid.getWasDataValidationSuccess())
+            stringBuffer.append(isUserFirstNameValid.getDataValidationMessage());
 
-        if (!isUserLastNameValid.getValidationStatus())
-            stringBuffer.append(isUserLastNameValid.getValidationNotification());
+        // if user last name validation error, add the validation message to the string buffer
+        if (!isUserLastNameValid.getWasDataValidationSuccess())
+            stringBuffer.append(isUserLastNameValid.getDataValidationMessage());
 
-        if (!isUserEmailAddressValid.getValidationStatus())
-            stringBuffer.append(isUserEmailAddressValid.getValidationNotification());
+        // if user email validation error, add the validation message to the string buffer
+        if (!isUserEmailAddressValid.getWasDataValidationSuccess())
+            stringBuffer.append(isUserEmailAddressValid.getDataValidationMessage());
 
-        if (!isUserPhoneNumberValid.getValidationStatus())
-            stringBuffer.append(isUserPhoneNumberValid.getValidationNotification());
+        // if user phone number validation error, add the validation message to the string buffer
+        if (!isUserPhoneNumberValid.getWasDataValidationSuccess())
+            stringBuffer.append(isUserPhoneNumberValid.getDataValidationMessage());
 
-        if (!isUserDODIdentifierValid.getValidationStatus())
-            stringBuffer.append(isUserDODIdentifierValid.getValidationNotification());
+        // if user dod id validation error, add the validation message to the string buffer
+        if (!isUserDODIdentifierValid.getWasDataValidationSuccess())
+            stringBuffer.append(isUserDODIdentifierValid.getDataValidationMessage());
 
-        aggregatedValidationMessages.setValidationNotification(stringBuffer.toString());
+        // set the aggregated validation messages to the aggregated ValidationStatusAndMessage
+        aggregatedValidationMessages.setDataValidationMessage(stringBuffer.toString());
 
+        //  return the aggregated validation aggregatedValidationMessages
         return aggregatedValidationMessages;
     }
 
@@ -121,28 +140,28 @@ public class PHAPersonValidator {
 
         if (personFirstName == null) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person First Name was null");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person First Name was null");
 
         } else if (personFirstName.isEmpty()) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person First Name was empty");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person First Name was empty");
 
         } else if (personFirstName.length() < 1) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person First Name was too short");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person First Name was too short");
 
         } else if (personFirstName == "") {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person First Name was empty");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person First Name was empty");
 
         } else {
 
-            validationStatusAndMessage.setValid(true);
-            validationStatusAndMessage.setValidationNotification("Person First Name passed validation checks");
+            validationStatusAndMessage.setDataValidationSuccessStatus(true);
+            validationStatusAndMessage.setDataValidationMessage("Person First Name passed validation checks");
 
         }
 
@@ -165,28 +184,28 @@ public class PHAPersonValidator {
 
         if (personLastName == null) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person Last Name was null. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person Last Name was null. ");
 
         } else if (personLastName.isEmpty()) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person Last Name was empty.");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person Last Name was empty.");
 
         } else if (personLastName.length() < 1) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person Last Name was too short.");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person Last Name was too short.");
 
         } else if (personLastName == "") {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person Last Name was empty.");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person Last Name was empty.");
 
         } else {
 
-            validationStatusAndMessage.setValid(true);
-            validationStatusAndMessage.setValidationNotification("Person Last Name passed validation checks.");
+            validationStatusAndMessage.setDataValidationSuccessStatus(true);
+            validationStatusAndMessage.setDataValidationMessage("Person Last Name passed validation checks.");
 
         }
 
@@ -209,6 +228,7 @@ public class PHAPersonValidator {
 
         String validPhoneNumberRegularExpression = "^[\\d]{10}$";
 
+        // regular expression variables
         Pattern pattern = Pattern.compile(validPhoneNumberRegularExpression);
         Matcher matcher = pattern.matcher(personPhoneNumber);
 
@@ -216,13 +236,13 @@ public class PHAPersonValidator {
 
         if (doesPhoneNumberFitCommonFormat) {
 
-            validationStatusAndMessage.setValid(true);
-            validationStatusAndMessage.setValidationNotification("Person Phone Number Format Was Valid. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(true);
+            validationStatusAndMessage.setDataValidationMessage("Person Phone Number Format Was Valid. ");
 
         } else {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person Phone Number Formatted Incorrectly. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person Phone Number Formatted Incorrectly. ");
 
         }
 
@@ -245,28 +265,28 @@ public class PHAPersonValidator {
 
         if (personDODIdentifier == null) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("DOD Identifier Was null. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("DOD Identifier Was null. ");
 
         } else if (personDODIdentifier.isEmpty()) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("DOD Identifier Was empty. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("DOD Identifier Was empty. ");
 
         } else if (personDODIdentifier.length() < 1) {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("DOD Identifier Was too short. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("DOD Identifier Was too short. ");
 
         } else if (personDODIdentifier == "") {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("DOD Identifier Was empty. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("DOD Identifier Was empty. ");
 
         } else {
 
-            validationStatusAndMessage.setValid(true);
-            validationStatusAndMessage.setValidationNotification("DOD Identifier passed validation checks. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(true);
+            validationStatusAndMessage.setDataValidationMessage("DOD Identifier passed validation checks. ");
 
         }
 
@@ -289,13 +309,13 @@ public class PHAPersonValidator {
 
         if (isUserEmailValid) {
 
-            validationStatusAndMessage.setValid(true);
-            validationStatusAndMessage.setValidationNotification("Person Email Address Format Was Valid. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(true);
+            validationStatusAndMessage.setDataValidationMessage("Person Email Address Format Was Valid. ");
 
         } else {
 
-            validationStatusAndMessage.setValid(false);
-            validationStatusAndMessage.setValidationNotification("Person Email Address Formatted Incorrectly. ");
+            validationStatusAndMessage.setDataValidationSuccessStatus(false);
+            validationStatusAndMessage.setDataValidationMessage("Person Email Address Formatted Incorrectly. ");
 
         }
 
