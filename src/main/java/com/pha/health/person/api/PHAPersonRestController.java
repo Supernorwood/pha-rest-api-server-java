@@ -1,5 +1,6 @@
 package com.pha.health.person.api;
 
+import com.pha.health.person.model.PHAPersonHelper;
 import com.pha.health.person.model.PHAPersonValidator;
 import com.pha.health.validation.ValidationStatusAndMessage;
 import org.json.JSONObject;
@@ -56,9 +57,12 @@ public class PHAPersonRestController {
             //Response with an error HTTP code and the validation status messages.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dataValidationHashMap.toString());
         }
+        PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject));
 
         // On successful data validation, return HTTP Status OK (200)
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject)
+                ).toString(3));
     }
 
 }
