@@ -1,10 +1,9 @@
 package com.pha.health.person.api;
 
+import com.pha.health.jms.producer.JMSQueueProducer;
 import com.pha.health.person.model.PHAPersonHelper;
-import com.pha.health.person.model.PHAPersonValidator;
-import com.pha.health.validation.ValidationStatusAndMessage;
-import java.io.File;
-import java.util.Date;
+import com.pha.health.person.validation.PHAPersonValidator;
+import com.pha.health.person.validation.ValidationStatusAndMessage;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import javax.jms.JMSException;
-import org.example.producer.JMSQueueProducer;
-
 
 /**
  * Restful PHA Person Validation API Controller for the PHA Person API
@@ -23,9 +20,9 @@ import org.example.producer.JMSQueueProducer;
 @RequestMapping("/pha/person")
 public class PHAPersonRestController {
 
-           private static final String host="localhost";
-           private static final int port=61616;
-           private static final String queueName="PHA_FORM_A";
+    private static final String host = "localhost";
+    private static final int port = 61616;
+    private static final String queueName = "PHA_FORM_A";
 
     /**
      * Default Constructor for the PHA Person Validator RESTController
@@ -67,35 +64,10 @@ public class PHAPersonRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dataValidationHashMap.toString());
         }
 
-        System.out.println("writing content to file);");
-doWork(PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject)).toString());  
+        JMSQueueProducer jmsQueueProducer = new JMSQueueProducer(host, port, queueName);
+        jmsQueueProducer.sendMessage(PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject)).toString());
 
-//  PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject));
-
-        // On successful data validation, return HTTP Status OK (200)
-        return ResponseEntity.status(HttpStatus.OK).body("")  ;
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
-    
-    public void doWork( String jsonString) throws JMSException{
 
-        System.out.println("I am the JMS Producer !");
-        
-        System.out.println("content for the queuq: ");
-        System.out.println(jsonString);
-
-        System.out.println("trying t0o write to the queue");
-                JMSQueueProducer jmsQueueProducer = new JMSQueueProducer( host,  port,  queueName);
-
-
-      //  JMSQueueProducer jmsQueueProducer = new JMSQueueProducer("localhost", 61616, "PHA_FORM_A");
-    //    jmsQueueProducer.sendMessage("wwhat up tho!!");
-
-      //  JSONObject asdf = new JSONObject();
-      //  asdf.put("hello", "what up tho");
-      //  asdf.put("timestamp", new Date());
-     //   asdf.put("balance", 1_000_000);
-
-        jmsQueueProducer.sendMessage(jsonString);
-        
-    }
 }

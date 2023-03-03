@@ -13,6 +13,7 @@
 		<version>3.0.2</version>
 
 		<relativePath/>
+                
 	</parent>
 
 	<groupId>com.pha.health.person.api</groupId>
@@ -21,7 +22,7 @@
 
 	<version>1.0-SNAPSHOT</version>
 
-	<name>>pha-health-person-api</name>
+	<name>pha-health-person-api</name>
 
 	<description>RESTful API server to handle PHA Person data.</description>
 
@@ -50,13 +51,10 @@
 			<version>20200518</version>
 		</dependency>
 
-
 		<dependency>
-
-		<groupId>org.example</groupId>
-		<artifactId>pha-jms-message-producer</artifactId>
-		<version>1.0-SNAPSHOT</version>
-
+                    <groupId>com.pha.health.person.api</groupId>
+                    <artifactId>pha-health-person-jms-producer</artifactId>
+                    <version>1.0-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

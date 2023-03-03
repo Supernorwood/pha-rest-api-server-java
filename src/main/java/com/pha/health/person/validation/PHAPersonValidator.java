@@ -1,6 +1,6 @@
-package com.pha.health.person.model;
+package com.pha.health.person.validation;
 
-import com.pha.health.validation.ValidationStatusAndMessage;
+import com.pha.health.person.model.PHAPersonKeys;
 import org.json.JSONObject;
 
 import java.util.regex.Matcher;

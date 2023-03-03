@@ -1,4 +1,4 @@
-package com.pha.health.validation;
+package com.pha.health.person.validation;
 
 /**
  * The Result of the validation attempt of a PHA Form A Person JSON Document
