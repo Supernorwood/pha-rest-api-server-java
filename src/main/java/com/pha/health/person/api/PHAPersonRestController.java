@@ -57,12 +57,11 @@ public class PHAPersonRestController {
             //Response with an error HTTP code and the validation status messages.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dataValidationHashMap.toString());
         }
+
         PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject));
 
         // On successful data validation, return HTTP Status OK (200)
-        return ResponseEntity.status(HttpStatus.OK).body(
-                PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject)
-                ).toString(3));
+        return ResponseEntity.status(HttpStatus.OK).body("")  ;
     }
 
 }
