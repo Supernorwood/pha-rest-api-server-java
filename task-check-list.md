@@ -8,10 +8,10 @@ PHA Form A Challange
 successfully parsed and transformed.
 - [done] Download and install Active MQ.
 - 
-- Add a message producer to send new JSON doc to a queue in AMQ. 
-- [WIP] Create an ActiveMQ queue called named: PHA_FORM_A.
+- done] Add a message producer to send new JSON doc to a queue in AMQ. 
+- [done] Create an ActiveMQ queue called named: PHA_FORM_A.
 - 
-- Write a message consumer (seperate project and WAR) to retrieve the message from the queue, and
+- [done] Write a message consumer (seperate project and WAR) to retrieve the message from the queue, and
 write it out to a local file.
 - 
 ## add instructions to start the active mq situation

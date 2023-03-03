@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 /**
  *
- * Starts the PHA Forma A Data Intake API
+ * Starts the PHA Form A Data Intake API
  */
 public class PHAPersonRestServerRunner {
 
