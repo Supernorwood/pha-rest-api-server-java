@@ -10,35 +10,37 @@ public class PHAPersonHelper {
     /**
      * Create and populate a PHAPerson Object with content from the input JSONObject.
      */
-    public static PHAPerson readPHAPersonFromJSONObject(JSONObject jsonObject) {
+    public static PHAPerson unmarshallDataFromJSONToPHAPerson(JSONObject jsonObject) {
 
         // Create a new PHA Person Object
         PHAPerson loadedPHAPerson = new PHAPerson();
 
         // Read and set key PHA Person Data
-        loadedPHAPerson.setFirstName(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.FIRST_NAME));
-        loadedPHAPerson.setLastName(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.LAST_NAME));
+        loadedPHAPerson.setFirstName(jsonObject.getJSONObject("phaqRecord").getString("fname"));
+        loadedPHAPerson.setLastName(jsonObject.getJSONObject("phaqRecord").getString("lname"));
 
-        loadedPHAPerson.setDateOfBirth(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.DATE_OF_BIRTH));
-        loadedPHAPerson.setGender(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.GENDER));
+        loadedPHAPerson.setDateOfBirth(jsonObject.getJSONObject("phaqRecord").getString("dob"));
+        loadedPHAPerson.setGender(jsonObject.getJSONObject("phaqRecord").getString("sex"));
 
-        loadedPHAPerson.setMailingAddress(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.MAILING_ADDRESS));
-        loadedPHAPerson.setPhoneNumber(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.PRIMARY_PHONE_NUMBER));
-        loadedPHAPerson.setEmailAddress(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.EMAIL_ADDRESS));
+        loadedPHAPerson.setMailingAddress(jsonObject.getJSONObject("phaqRecord").getString("addr"));
+        loadedPHAPerson.setPhoneNumber(jsonObject.getJSONObject("phaqRecord").getString("phoneDay"));
+        loadedPHAPerson.setEmailAddress(jsonObject.getJSONObject("phaqRecord").getString ("email1"));
 
-        loadedPHAPerson.setDodID(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.DOD_ID));
+        loadedPHAPerson.setDodID(jsonObject.getJSONObject("phaqRecord").getString("dodId"));
 
-        loadedPHAPerson.setService(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.SERVICE));
-        loadedPHAPerson.setRank(jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.RANK));
+        loadedPHAPerson.setService(jsonObject.getJSONObject("phaqRecord").getString( "serviceOther"));
+        loadedPHAPerson.setRank(jsonObject.getJSONObject("phaqRecord").getString( "grade"));
 
         // Return the created and populated PHA Person
         return loadedPHAPerson;
     }
 
     /**
-     * Reads the values of a input PHAPerson object and converts content into an organized output JSON Object.
+     * Map the values of a input PHAPerson object and converts content into an organized output JSON Object.
+     * 
+     * The transformation from one JSON Document type to another happens here.
      */
-    public static JSONObject writeJSONObjectFromPHAPersonObject(PHAPerson phaPerson) {
+    public static JSONObject transformPHAPersonToNestedJSON(PHAPerson phaPerson) {
 
         // Create a new JSON Objct
         JSONObject phaPersonJSONObject = new JSONObject();

@@ -3,7 +3,7 @@ package com.pha.health.person.api;
 import com.pha.health.jms.producer.JMSQueueProducer;
 import com.pha.health.person.model.PHAPersonHelper;
 import com.pha.health.person.validation.PHAPersonValidator;
-import com.pha.health.person.validation.ValidationStatusAndMessage;
+import com.pha.health.person.validation.PHAPersonValidationStatusAndMessage;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +43,13 @@ public class PHAPersonRestController {
      * Validate and transform the JSON String representation of a PHA Person.
      */
     @PostMapping("/transform-user-data")
-    public ResponseEntity<String> validatePHAUserJSON(@RequestBody String phaUserJSONString) throws JMSException {
+    public ResponseEntity<String> transformUserData(@RequestBody String phaUserJSONString) throws JMSException {
 
-        // Create a populated JSONObject from the JSON String
+        // Take the JSON String and Create a populated JSONObject
         JSONObject phaUserJSONObject = new JSONObject(phaUserJSONString);
 
         // Attempt to validate the JSON Object. Validation errors are tracked in the object
-        ValidationStatusAndMessage jsonObjectValidationStatusAndMessage = PHAPersonValidator.validateEntireUserJSONObject(phaUserJSONObject);
+        PHAPersonValidationStatusAndMessage jsonObjectValidationStatusAndMessage = PHAPersonValidator.validateEntireUserJSONObject(phaUserJSONObject);
 
         // If The Validation Does Not Pass...
         if (!jsonObjectValidationStatusAndMessage.getWasDataValidationSuccess()) {
@@ -65,7 +65,7 @@ public class PHAPersonRestController {
         }
 
         JMSQueueProducer jmsQueueProducer = new JMSQueueProducer(host, port, queueName);
-        jmsQueueProducer.sendMessage(PHAPersonHelper.writeJSONObjectFromPHAPersonObject(PHAPersonHelper.readPHAPersonFromJSONObject(phaUserJSONObject)).toString());
+        jmsQueueProducer.sendMessage(PHAPersonHelper.transformPHAPersonToNestedJSON(PHAPersonHelper.unmarshallDataFromJSONToPHAPerson(phaUserJSONObject)).toString());
 
         return ResponseEntity.status(HttpStatus.OK).body("");
     }

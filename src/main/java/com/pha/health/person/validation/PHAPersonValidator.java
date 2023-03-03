@@ -1,6 +1,5 @@
 package com.pha.health.person.validation;
 
-import com.pha.health.person.model.PHAPersonKeys;
 import org.json.JSONObject;
 
 import java.util.regex.Matcher;
@@ -21,10 +20,10 @@ public class PHAPersonValidator {
      * @param jsonString JSON String fetched from the API POST request call.
      * @return Aggregated ValidationStatusAndMessage of the results of input String validation.
      */
-    public static ValidationStatusAndMessage validateUserJSONString(String jsonString) {
+    public static PHAPersonValidationStatusAndMessage validateUserJSONString(String jsonString) {
 
         // Creates a new validation results object
-        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
+        PHAPersonValidationStatusAndMessage validationStatusAndMessage = new PHAPersonValidationStatusAndMessage();
 
         if (jsonString == null) { // check that the input json string is not null
 
@@ -66,25 +65,25 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the user email matches the regular expression. False, if not.
      */
-    public static ValidationStatusAndMessage validateEntireUserJSONObject(JSONObject jsonObject) {
+    public static PHAPersonValidationStatusAndMessage validateEntireUserJSONObject(JSONObject jsonObject) {
 
         // Create ValidationStatusAndMessage for the user first name validation
-        ValidationStatusAndMessage isUserFirstNameValid = validateUserFirstName(jsonObject);
+        PHAPersonValidationStatusAndMessage isUserFirstNameValid = validateUserFirstName(jsonObject);
 
         // Create ValidationStatusAndMessage for the user last name validation
-        ValidationStatusAndMessage isUserLastNameValid = validateUserLastName(jsonObject);
+        PHAPersonValidationStatusAndMessage isUserLastNameValid = validateUserLastName(jsonObject);
 
         // Create ValidationStatusAndMessage for the user email validation
-        ValidationStatusAndMessage isUserEmailAddressValid = validateUserEmailAddress(jsonObject);
+        PHAPersonValidationStatusAndMessage isUserEmailAddressValid = validateUserEmailAddress(jsonObject);
 
         // Create ValidationStatusAndMessage for the user phone number validation
-        ValidationStatusAndMessage isUserPhoneNumberValid = validateUserPhoneNumber(jsonObject);
+        PHAPersonValidationStatusAndMessage isUserPhoneNumberValid = validateUserPhoneNumber(jsonObject);
 
         // Create ValidationStatusAndMessage for the user DOD Id validation
-        ValidationStatusAndMessage isUserDODIdentifierValid = validatePersonDODIdentifier(jsonObject);
+        PHAPersonValidationStatusAndMessage isUserDODIdentifierValid = validatePersonDODIdentifier(jsonObject);
 
         // Create ValidationStatusAndMessage to hold the aggregation of all data validations
-        ValidationStatusAndMessage aggregatedValidationMessages = new ValidationStatusAndMessage();
+        PHAPersonValidationStatusAndMessage aggregatedValidationMessages = new PHAPersonValidationStatusAndMessage();
 
         // calculate boolean logic of total user validation from each of the smaller validations and set the boolean status value
         aggregatedValidationMessages.setDataValidationSuccessStatus(
@@ -132,11 +131,11 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the first name is non-null and non-empty. False, if not.
      */
-    private static ValidationStatusAndMessage validateUserFirstName(JSONObject jsonObject) {
+    private static PHAPersonValidationStatusAndMessage validateUserFirstName(JSONObject jsonObject) {
 
-        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
+        PHAPersonValidationStatusAndMessage validationStatusAndMessage = new PHAPersonValidationStatusAndMessage();
 
-        String personFirstName = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.FIRST_NAME);
+        String personFirstName = jsonObject.getJSONObject("phaqRecord").getString("fname");
 
         if (personFirstName == null) {
 
@@ -176,11 +175,11 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the last name is non-null and non-empty. False, if not.
      */
-    private static ValidationStatusAndMessage validateUserLastName(JSONObject jsonObject) {
+    private static PHAPersonValidationStatusAndMessage validateUserLastName(JSONObject jsonObject) {
 
-        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
+        PHAPersonValidationStatusAndMessage validationStatusAndMessage = new PHAPersonValidationStatusAndMessage();
 
-        String personLastName = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.LAST_NAME);
+        String personLastName = jsonObject.getJSONObject("phaqRecord").getString("lname");
 
         if (personLastName == null) {
 
@@ -220,11 +219,11 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the user phone number matches the regular expression. False, if not.
      */
-    public static ValidationStatusAndMessage validateUserPhoneNumber(JSONObject jsonObject) {
+    public static PHAPersonValidationStatusAndMessage validateUserPhoneNumber(JSONObject jsonObject) {
 
-        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
+        PHAPersonValidationStatusAndMessage validationStatusAndMessage = new PHAPersonValidationStatusAndMessage();
 
-        String personPhoneNumber = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.PRIMARY_PHONE_NUMBER);
+        String personPhoneNumber = jsonObject.getJSONObject("phaqRecord").getString("phoneDay");
 
         String validPhoneNumberRegularExpression = "^[\\d]{10}$";
 
@@ -257,11 +256,11 @@ public class PHAPersonValidator {
      * @param jsonObject JSONObject representation of a Person
      * @return True, if the DOD Identifier is non-null and non-empty. False, if not.
      */
-    private static ValidationStatusAndMessage validatePersonDODIdentifier(JSONObject jsonObject) {
+    private static PHAPersonValidationStatusAndMessage validatePersonDODIdentifier(JSONObject jsonObject) {
 
-        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
+        PHAPersonValidationStatusAndMessage validationStatusAndMessage = new PHAPersonValidationStatusAndMessage();
 
-        String personDODIdentifier = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.DOD_ID);
+        String personDODIdentifier = jsonObject.getJSONObject("phaqRecord").getString("dodId");
 
         if (personDODIdentifier == null) {
 
@@ -293,11 +292,11 @@ public class PHAPersonValidator {
         return validationStatusAndMessage;
     }
 
-    private static ValidationStatusAndMessage validateUserEmailAddress(JSONObject jsonObject) {
+    private static PHAPersonValidationStatusAndMessage validateUserEmailAddress(JSONObject jsonObject) {
 
-        ValidationStatusAndMessage validationStatusAndMessage = new ValidationStatusAndMessage();
+        PHAPersonValidationStatusAndMessage validationStatusAndMessage = new PHAPersonValidationStatusAndMessage();
 
-        String personEmailAddress = jsonObject.getJSONObject(PHAPersonKeys.PHA_Q_RECORD).getString(PHAPersonKeys.EMAIL_ADDRESS);
+        String personEmailAddress = jsonObject.getJSONObject("phaqRecord").getString("email1");
 
         String validEmailRegularExpression = "^(.+)@(.+)$";
 

@@ -5,7 +5,7 @@ package com.pha.health.person.validation;
  * <p>
  * This Object contains a boolean validation status and a Data validation notification string.
  */
-public class ValidationStatusAndMessage {
+public class PHAPersonValidationStatusAndMessage {
 
     /**
      * Did the content pass the data validation checks?
@@ -17,11 +17,11 @@ public class ValidationStatusAndMessage {
      */
     String dataValidationMessage;
 
-    public ValidationStatusAndMessage() {
+    public PHAPersonValidationStatusAndMessage() {
 
     }
 
-    public ValidationStatusAndMessage(Boolean wasDataValidationSuccess, String dataValidationMessage) {
+    public PHAPersonValidationStatusAndMessage(Boolean wasDataValidationSuccess, String dataValidationMessage) {
 
         this.wasDataValidationSuccess = wasDataValidationSuccess;
         this.dataValidationMessage = dataValidationMessage;
@@ -49,7 +49,7 @@ public class ValidationStatusAndMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ValidationStatusAndMessage that = (ValidationStatusAndMessage) o;
+        PHAPersonValidationStatusAndMessage that = (PHAPersonValidationStatusAndMessage) o;
 
         if (!wasDataValidationSuccess.equals(that.wasDataValidationSuccess)) return false;
         return dataValidationMessage.equals(that.dataValidationMessage);
